@@ -17,6 +17,10 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path
+from devices.views import (
+    DeviceGroupListCreateView, DeviceGroupDetailView,
+    NetworkDeviceListCreateView, NetworkDeviceDetailView
+)
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -38,4 +42,17 @@ urlpatterns = [
     # Roles
     path("api/roles/", RoleListCreateView.as_view(), name="role-list"),
     path("api/roles/<int:pk>/", RoleDetailView.as_view(), name="role-detail"),
+]
+
+
+
+
+urlpatterns += [
+    # Device Groups
+    path("api/device-groups/", DeviceGroupListCreateView.as_view(), name="device-group-list"),
+    path("api/device-groups/<int:pk>/", DeviceGroupDetailView.as_view(), name="device-group-detail"),
+
+    # Devices
+    path("api/devices/", NetworkDeviceListCreateView.as_view(), name="device-list"),
+    path("api/devices/<int:pk>/", NetworkDeviceDetailView.as_view(), name="device-detail"),
 ]
