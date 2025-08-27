@@ -23,7 +23,7 @@ urlpatterns = [
     path("api/metrics/", include("metrics.urls")),
     path("api/alerts/", include("alerts.urls")),
     path("api/audit/", include("audit.urls")),
-
+    
     # Web URLs (HTML pages)
     path("users/", include("users.urls_web")),
     path("devices/", include("devices.urls_web")),

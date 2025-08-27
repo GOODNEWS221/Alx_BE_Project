@@ -24,8 +24,8 @@
             <td>{{ device.ip_address }}</td>
             <td>{{ device.device_type }}</td>
             <td>{{ device.status }}</td>
-            <td>{{ device.group.name if device.group else "" }}</td>
-            <td>{{ device.added_by.username if device.added_by else "" }}</td>
+            <td>{{ device.group.name|default:"" }}</td>
+            <td>{{ device.added_by.username|default:"" }}</td>
             <td>
                 <a href="{% url 'network-device-edit' device.id %}" class="btn btn-sm btn-warning">Edit</a>
                 <a href="{% url 'network-device-delete' device.id %}" class="btn btn-sm btn-danger">Delete</a>

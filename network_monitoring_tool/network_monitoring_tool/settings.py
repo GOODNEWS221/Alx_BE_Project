@@ -111,7 +111,7 @@ DATABASES = {
         'NAME': 'goodnet_db',
         'USER': 'goodnet_user',
         'PASSWORD': 'Good5472@#_',
-        'HOST': '127.0.0.1',  # or 'localhost'
+        'HOST': '127.0.0.1',
         'PORT': '3306',
         'OPTIONS': {
             'charset': 'utf8mb4',

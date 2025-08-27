@@ -1,0 +1,30 @@
+{% extends "audit/base_sidebar.html" %}  {# or "users/base.html" depending on layout #}
+
+{% block title %}Metrics Logs{% endblock %}
+
+{% block content %}
+<h2>Metrics Logs</h2>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Metric Name</th>
+            <th>Value</th>
+            <th>Timestamp</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for log in logs %}
+        <tr>
+            <td>{{ log.id }}</td>
+            <td>{{ log.metric_name }}</td>
+            <td>{{ log.value }}</td>
+            <td>{{ log.timestamp }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4">No logs found.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

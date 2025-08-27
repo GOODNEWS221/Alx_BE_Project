@@ -121,3 +121,7 @@ def metric_delete(request, pk):
         metric.delete()
         return redirect("metric-list")
     return render(request, "metrics/metric_form.html", {"form": None, "form_title": "Delete Metric"})
+
+
+def metrics_logs(request):
+    return render(request, "metrics/metrics_logs.html")
