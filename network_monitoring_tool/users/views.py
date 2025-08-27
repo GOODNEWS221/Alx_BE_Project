@@ -3,6 +3,8 @@ from django.contrib.auth import get_user_model
 from .models import Role
 from .serializers import UserSerializer, RoleSerializer, RegisterSerializer
 from .permissions import IsAdmin
+from django.shortcuts import render, redirect, get_object_or_404
+from .forms import UserForm, RoleForm
 
 User = get_user_model()
 
@@ -35,3 +37,70 @@ class RoleDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Role.objects.all()
     serializer_class = RoleSerializer
     permission_classes = [IsAdmin]
+
+
+# --- Users ---
+def user_list(request):
+    users = User.objects.all()
+    return render(request, "users/user_list.html", {"users": users})
+
+def user_add(request):
+    if request.method == "POST":
+        form = UserForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("user-list")
+    else:
+        form = UserForm()
+    return render(request, "users/user_form.html", {"form": form, "form_title": "Add User"})
+
+def user_edit(request, pk):
+    user = get_object_or_404(User, pk=pk)
+    if request.method == "POST":
+        form = UserForm(request.POST, instance=user)
+        if form.is_valid():
+            form.save()
+            return redirect("user-list")
+    else:
+        form = UserForm(instance=user)
+    return render(request, "users/user_form.html", {"form": form, "form_title": "Edit User"})
+
+def user_delete(request, pk):
+    user = get_object_or_404(User, pk=pk)
+    if request.method == "POST":
+        user.delete()
+        return redirect("user-list")
+    return render(request, "users/user_form.html", {"form": None, "form_title": "Delete User"})
+
+def role_list(request):
+    roles = Role.objects.all()
+    return render(request, "users/role_list.html", {"roles": roles})
+
+def role_add(request):
+    if request.method == "POST":
+        form = RoleForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("role-list")
+    else:
+        form = RoleForm()
+    return render(request, "users/role_form.html", {"form": form, "form_title": "Add Role"})
+
+def role_edit(request, pk):
+    role = get_object_or_404(Role, pk=pk)
+    if request.method == "POST":
+        form = RoleForm(request.POST, instance=role)
+        if form.is_valid():
+            form.save()
+            return redirect("role-list")
+    else:
+        form = RoleForm(instance=role)
+    return render(request, "users/role_form.html", {"form": form, "form_title": "Edit Role"})
+
+def role_delete(request, pk):
+    role = get_object_or_404(Role, pk=pk)
+    if request.method == "POST":
+        role.delete()
+        return redirect("role-list")
+    # You can show a simple confirmation page or reuse form
+    return render(request, "users/role_form.html", {"form": None, "form_title": "Delete Role"})

@@ -1,0 +1,27 @@
+{% extends "users/base.html" %}
+{% block title %}{{ form_title }}{% endblock %}
+
+{% block content %}
+<h2>{{ form_title }}</h2>
+<form method="post">
+    {% csrf_token %}
+    <div class="mb-3">
+        <label>Username</label>
+        {{ form.username }}
+    </div>
+    <div class="mb-3">
+        <label>Email</label>
+        {{ form.email }}
+    </div>
+    <div class="mb-3">
+        <label>Password</label>
+        {{ form.password }}
+    </div>
+    <div class="mb-3">
+        <label>Role</label>
+        {{ form.role }}
+    </div>
+    <button type="submit" class="btn btn-success">Save</button>
+    <a href="{% url 'user-list' %}" class="btn btn-secondary">Cancel</a>
+</form>
+{% endblock %}

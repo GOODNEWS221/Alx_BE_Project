@@ -10,6 +10,9 @@ from .views import (
     RoleListCreateView, RoleDetailView
 )
 
+from django.urls import path
+from . import views
+
 urlpatterns = [
     # Auth
     path("register/", RegisterUserView.as_view(), name="register"),
@@ -23,4 +26,16 @@ urlpatterns = [
     # Roles
     path("roles/", RoleListCreateView.as_view(), name="role-list"),
     path("roles/<int:pk>/", RoleDetailView.as_view(), name="role-detail"),
+
+    #templates
+    path("", views.user_list, name="user-list"),
+    path("add/", views.user_add, name="user-add"),
+    path("<int:pk>/edit/", views.user_edit, name="user-edit"),
+    path("<int:pk>/delete/", views.user_delete, name="user-delete"),
+
+    # Roles
+    path("roles/", views.role_list, name="role-list"),
+    path("roles/add/", views.role_add, name="role-add"),
+    path("roles/<int:pk>/edit/", views.role_edit, name="role-edit"),
+    path("roles/<int:pk>/delete/", views.role_delete, name="role-delete"),
 ]

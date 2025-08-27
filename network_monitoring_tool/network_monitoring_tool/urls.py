@@ -17,4 +17,5 @@ urlpatterns = [
 
     # Audit app routes>>>
     path("api/audit/", include("audit.urls")),
+   
 ]
