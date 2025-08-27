@@ -6,6 +6,7 @@ from users.permissions import IsAdmin, IsViewerOrReadOnly
 from audit.models import AuditLog
 
 
+
 # Utility function for logging actions
 def log_action(user, action, obj):
     AuditLog.objects.create(
@@ -73,3 +74,13 @@ class NetworkDeviceDetailView(generics.RetrieveUpdateDestroyAPIView):
     def perform_destroy(self, instance):
         log_action(self.request.user, "DELETE", instance)
         super().perform_destroy(instance)
+
+
+def log_action(request, action, instance, details=""):
+    AuditLog.objects.create(
+        user=request.user if request.user.is_authenticated else None,
+        action=action,
+        model_name=instance.__class__.__name__,
+        object_id=str(instance.pk),
+        details=details
+    )
