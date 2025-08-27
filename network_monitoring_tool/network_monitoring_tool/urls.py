@@ -24,4 +24,12 @@ urlpatterns = [
     path("audit/", include("audit.urls")),
     path("metrics/", include("metrics.urls")),
     path("alerts/", include("alerts.urls")),
+
+
+        # Web URLs (HTML pages)
+    path("users/", include("users.urls_web")),
+    path("devices/", include("devices.urls_web")),
+    path("metrics/", include("metrics.urls_web")),
+    path("alerts/", include("alerts.urls_web")),
+    path("audit/", include("audit.urls_web")),
 ]

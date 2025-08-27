@@ -15,18 +15,18 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
-                    <li class="nav-item"><a class="nav-link" href="/devices/">Devices</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/metrics/">Metrics</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/alerts/">Alerts</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/audit/">Audit Logs</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/api/users/">Users</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'network-device-list' %}">Devices</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'metrics-list' %}">Metrics</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'alerts-list' %}">Alerts</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'audit-list' %}">Audit Logs</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'user-list' %}">Users</a></li>
                 </ul>
                 <ul class="navbar-nav">
                     {% if request.user.is_authenticated %}
                         <li class="nav-item">
                             <span class="navbar-text me-2">Hello, {{ request.user.username }}</span>
                         </li>
-                        <!-- Use a POST form for logout to avoid HTTP 405 -->
+                        <!-- Use POST form for logout -->
                         <li class="nav-item">
                             <form method="post" action="{% url 'logout' %}">
                                 {% csrf_token %}
@@ -46,10 +46,10 @@
             <!-- Sidebar -->
             <nav class="col-md-2 bg-light sidebar py-3">
                 <ul class="nav flex-column">
-                    <li class="nav-item"><a class="nav-link" href="/devices/">Devices</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/metrics/">Metrics</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/alerts/">Alerts</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/audit/">Audit Logs</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'network-device-list' %}">Devices</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'metrics-list' %}">Metrics</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'alerts-list' %}">Alerts</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'audit-list' %}">Audit Logs</a></li>
                 </ul>
             </nav>
 
