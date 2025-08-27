@@ -9,7 +9,6 @@ class DeviceGroup(models.Model):
         return self.name
 
 
-
 class NetworkDevice(models.Model):
     DEVICE_TYPES = (
         ("Router", "Router"),
@@ -31,11 +30,23 @@ class NetworkDevice(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="unknown")
     location = models.CharField(max_length=100, blank=True, null=True)
 
+    # 🔹 SNMP fields
+    snmp_community = models.CharField(max_length=100, default="public")
+    snmp_port = models.PositiveIntegerField(default=161)
+
     added_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="devices_added"   # 👈 unique related_name
     )
     group = models.ForeignKey(
-        DeviceGroup, on_delete=models.SET_NULL, null=True, blank=True, related_name="devices"
+        "DeviceGroup",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="devices"
     )
     added_at = models.DateTimeField(auto_now_add=True)
 
