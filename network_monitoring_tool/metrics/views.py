@@ -5,7 +5,10 @@ from django.utils.timezone import now
 from metrics.models import NetworkDevice, DeviceMetric
 from metrics.serializers import NetworkDeviceSerializer, DeviceMetricSerializer
 from metrics.utils import ping_device   # import your ping helper
-
+from django.shortcuts import render
+from django.core.paginator import Paginator
+from django.contrib.auth.decorators import login_required
+from .models import DeviceMetric
 
 # 🔹 Device CRUD (Admin can add/remove, others can view)
 class NetworkDeviceViewSet(viewsets.ModelViewSet):
@@ -66,6 +69,53 @@ class LatestDeviceMetricView(generics.RetrieveAPIView):
         metric = DeviceMetric.objects.filter(device__id=device_id).order_by("-timestamp").first()
         if metric:
             return Response(DeviceMetricSerializer(metric).data)
-        return Response({"detail": "No metrics found for this device"}, status=404)r
+        return Response({"detail": "No metrics found for this device"}, status=404)
 
+
+@login_required
+def metrics_list(request):
+    metrics_qs = DeviceMetric.objects.all().order_by("-timestamp")
+
+    # Filters
+    device_id = request.GET.get("device_id")
+    metric_type = request.GET.get("metric_type")
+
+    if device_id:
+        metrics_qs = metrics_qs.filter(device__id=device_id)
+    if metric_type:
+        metrics_qs = metrics_qs.filter(metric_type=metric_type)
+
+    # Pagination
+    paginator = Paginator(metrics_qs, 25)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, "metrics/metrics_list.html", {"metrics": page_obj})
 # Create your views here.
+
+def metrics_list(request):
+    # Start with all metrics
+    metrics = DeviceMetric.objects.all().order_by('-timestamp')
+
+    # Filter by device_id
+    device_id = request.GET.get('device_id')
+    if device_id:
+        metrics = metrics.filter(device__id=device_id)
+
+    # Filter by metric_type
+    metric_type = request.GET.get('metric_type')
+    if metric_type:
+        metrics = metrics.filter(metric_type=metric_type)
+
+    # Pagination: 25 per page
+    paginator = Paginator(metrics, 25)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    # Pass context including METRIC_TYPES for filter dropdown
+    context = {
+        "metrics": page_obj,
+        "METRIC_TYPES": DeviceMetric.METRIC_TYPES,
+    }
+
+    return render(request, "metrics/metrics_list.html", context)

@@ -4,7 +4,8 @@ from .models import DeviceGroup, NetworkDevice
 from .serializers import DeviceGroupSerializer, NetworkDeviceSerializer
 from users.permissions import IsAdmin, IsViewerOrReadOnly
 from audit.models import AuditLog
-
+from django.shortcuts import render, redirect, get_object_or_404
+from .forms import DeviceGroupForm, NetworkDeviceForm
 
 
 # Utility function for logging actions
@@ -84,3 +85,73 @@ def log_action(request, action, instance, details=""):
         object_id=str(instance.pk),
         details=details
     )
+
+
+
+# --- Device Groups ---
+def device_group_list(request):
+    groups = DeviceGroup.objects.all()
+    return render(request, "devices/device_group_list.html", {"groups": groups})
+
+def device_group_add(request):
+    if request.method == "POST":
+        form = DeviceGroupForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("device-group-list")
+    else:
+        form = DeviceGroupForm()
+    return render(request, "devices/device_group_form.html", {"form": form, "form_title": "Add Device Group"})
+
+def device_group_edit(request, pk):
+    group = get_object_or_404(DeviceGroup, pk=pk)
+    if request.method == "POST":
+        form = DeviceGroupForm(request.POST, instance=group)
+        if form.is_valid():
+            form.save()
+            return redirect("device-group-list")
+    else:
+        form = DeviceGroupForm(instance=group)
+    return render(request, "devices/device_group_form.html", {"form": form, "form_title": "Edit Device Group"})
+
+def device_group_delete(request, pk):
+    group = get_object_or_404(DeviceGroup, pk=pk)
+    if request.method == "POST":
+        group.delete()
+        return redirect("device-group-list")
+    return render(request, "devices/device_group_form.html", {"form": None, "form_title": "Delete Device Group"})
+
+# --- Network Devices ---
+def network_device_list(request):
+    devices = NetworkDevice.objects.all()
+    return render(request, "devices/network_device_list.html", {"devices": devices})
+
+def network_device_add(request):
+    if request.method == "POST":
+        form = NetworkDeviceForm(request.POST)
+        if form.is_valid():
+            device = form.save(commit=False)
+            device.added_by = request.user
+            device.save()
+            return redirect("network-device-list")
+    else:
+        form = NetworkDeviceForm()
+    return render(request, "devices/network_device_form.html", {"form": form, "form_title": "Add Network Device"})
+
+def network_device_edit(request, pk):
+    device = get_object_or_404(NetworkDevice, pk=pk)
+    if request.method == "POST":
+        form = NetworkDeviceForm(request.POST, instance=device)
+        if form.is_valid():
+            form.save()
+            return redirect("network-device-list")
+    else:
+        form = NetworkDeviceForm(instance=device)
+    return render(request, "devices/network_device_form.html", {"form": form, "form_title": "Edit Network Device"})
+
+def network_device_delete(request, pk):
+    device = get_object_or_404(NetworkDevice, pk=pk)
+    if request.method == "POST":
+        device.delete()
+        return redirect("network-device-list")
+    return render(request, "devices/network_device_form.html", {"form": None, "form_title": "Delete Network Device"})

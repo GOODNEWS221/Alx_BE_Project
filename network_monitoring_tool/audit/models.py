@@ -23,6 +23,8 @@ class AuditLog(models.Model):
     object_id = models.CharField(max_length=100, blank=True, null=True)  # record ID
     details = models.TextField(blank=True, null=True)
     timestamp = models.DateTimeField(auto_now_add=True)
+    description = models.TextField(blank=True, null=True)
+    
 
     def __str__(self):
         return f"{self.user} - {self.action} {self.model_name} ({self.object_id})"
