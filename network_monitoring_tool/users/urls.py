@@ -14,6 +14,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+
     # Auth
     path("register/", RegisterUserView.as_view(), name="register"),
     path("login/", TokenObtainPairView.as_view(), name="login"),

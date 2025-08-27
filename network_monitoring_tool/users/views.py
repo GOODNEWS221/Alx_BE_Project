@@ -5,6 +5,9 @@ from .serializers import UserSerializer, RoleSerializer, RegisterSerializer
 from .permissions import IsAdmin
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import UserForm, RoleForm
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import login 
+from django.contrib.auth.decorators import login_required
 
 User = get_user_model()
 
@@ -104,3 +107,24 @@ def role_delete(request, pk):
         return redirect("role-list")
     # You can show a simple confirmation page or reuse form
     return render(request, "users/role_form.html", {"form": None, "form_title": "Delete Role"})
+
+
+def login_view(request):
+    if request.user.is_authenticated:
+        return redirect('dashboard')  # already logged in
+
+    if request.method == 'POST':
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            return redirect('dashboard')
+    else:
+        form = AuthenticationForm()
+
+    return render(request, 'users/login.html', {'form': form})
+
+@login_required(login_url='login')
+def dashboard(request):
+    # your existing dashboard logic
+    return render(request, 'dashboard.html')

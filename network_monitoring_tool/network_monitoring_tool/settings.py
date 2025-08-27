@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     "django_filters",
+    "widget_tweaks",
 
     #local apps
     'users',
@@ -64,6 +65,13 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'network_monitoring_tool.urls'
+
+
+LOGIN_URL = '/login/'      # redirect unauthenticated users here
+LOGIN_REDIRECT_URL = '/'          # redirect after successful login
+LOGOUT_REDIRECT_URL = '/login/'   # redirect after logout
+
+
 
 TEMPLATES = [
     {

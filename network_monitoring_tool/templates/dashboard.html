@@ -3,35 +3,127 @@
 {% block title %}Dashboard{% endblock %}
 
 {% block content %}
-<h1 class="mb-4">Network Monitoring Dashboard</h1>
+<div class="container-fluid py-4">
 
-<div class="row">
-    <div class="col-md-4">
-        <div class="card p-3 mb-3">
-            <h5>Devices</h5>
-            <p><a href="/devices/">View Devices</a></p>
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 text-dark">Central Dashboard</h1>
+        <small class="text-muted">Hello, {{ request.user.username }}</small>
+    </div>
+
+    <!-- Device Summary Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3 col-sm-6">
+            <div class="card text-white h-100 shadow rounded-4" style="background: linear-gradient(45deg, #4e73df, #1cc88a);">
+                <div class="card-body text-center">
+                    <div class="mb-2"><i class="bi bi-hdd-network display-6"></i></div>
+                    <h5 class="card-title">Total Devices</h5>
+                    <p class="card-text display-6 fw-bold">{{ total_devices }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="card text-white h-100 shadow rounded-4" style="background: linear-gradient(45deg, #1cc88a, #36b9cc);">
+                <div class="card-body text-center">
+                    <div class="mb-2"><i class="bi bi-wifi display-6"></i></div>
+                    <h5 class="card-title">Online Devices</h5>
+                    <p class="card-text display-6 fw-bold">{{ online_devices }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="card text-white h-100 shadow rounded-4" style="background: linear-gradient(45deg, #e74a3b, #f6c23e);">
+                <div class="card-body text-center">
+                    <div class="mb-2"><i class="bi bi-slash-circle display-6"></i></div>
+                    <h5 class="card-title">Offline Devices</h5>
+                    <p class="card-text display-6 fw-bold">{{ offline_devices }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="card text-white h-100 shadow rounded-4" style="background: linear-gradient(45deg, #f6c23e, #f8f9fc);">
+                <div class="card-body text-center">
+                    <div class="mb-2"><i class="bi bi-bell-fill display-6"></i></div>
+                    <h5 class="card-title">Active Alerts</h5>
+                    <p class="card-text display-6 fw-bold">{{ active_alerts }}</p>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="col-md-4">
-        <div class="card p-3 mb-3">
-            <h5>Metrics</h5>
-            <p><a href="/metrics/logs/">View Metrics</a></p>
+
+    <!-- Latest Metrics Table -->
+    <div class="card shadow mb-4 rounded-4">
+        <div class="card-header bg-gradient-primary text-white">
+            <h5 class="mb-0"><i class="bi bi-speedometer2 me-2"></i>Latest Metrics</h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Device</th>
+                            <th>Metric Type</th>
+                            <th>Value</th>
+                            <th>Timestamp</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for metric in latest_metrics %}
+                        <tr>
+                            <td>{{ metric.device.name }}</td>
+                            <td><span class="badge bg-info">{{ metric.get_metric_type_display }}</span></td>
+                            <td>{{ metric.value }}</td>
+                            <td>{{ metric.timestamp|date:"Y-m-d H:i:s" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center">No metrics found.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
-    <div class="col-md-4">
-        <div class="card p-3 mb-3">
-            <h5>Audit Logs</h5>
-            <p><a href="/audit/">View Audit Logs</a></p>
+
+    <!-- Recent Audit Logs Table -->
+    <div class="card shadow mb-4 rounded-4">
+        <div class="card-header bg-gradient-secondary text-white">
+            <h5 class="mb-0"><i class="bi bi-list-check me-2"></i>Recent Audit Logs</h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>User</th>
+                            <th>Action</th>
+                            <th>Model</th>
+                            <th>Timestamp</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for log in recent_audits %}
+                        <tr>
+                            <td>{{ log.user }}</td>
+                            <td>{{ log.action }}</td>
+                            <td>{{ log.model_name }}</td>
+                            <td>{{ log.timestamp|date:"Y-m-d H:i:s" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center">No audit logs found.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
+
 </div>
 
-<div class="row">
-    <div class="col-md-4">
-        <div class="card p-3 mb-3">
-            <h5>Alerts</h5>
-            <p><a href="/alerts/">View Alerts</a></p>
-        </div>
-    </div>
-</div>
+<!-- Icons CDN for Bootstrap Icons -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
 {% endblock %}

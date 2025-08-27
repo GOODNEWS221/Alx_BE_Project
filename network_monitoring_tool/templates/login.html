@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-center align-items-center" style="height: 80vh;">
+    <div class="card shadow-lg p-4" style="width: 400px; border-radius: 15px; background: linear-gradient(135deg, #ffffff, #f8f9fa);">
+        <div class="card-body">
+            <h3 class="card-title text-center mb-4">Welcome Back</h3>
+            <p class="text-center text-muted mb-4">Sign in to access your dashboard</p>
+
+            <form method="post" novalidate>
+                {% csrf_token %}
+
+                <!-- Username Field -->
+                <div class="mb-3">
+                    <label for="id_username" class="form-label">Username</label>
+                    {{ form.username|add_class:"form-control" }}
+                </div>
+
+                <!-- Password Field -->
+                <div class="mb-3">
+                    <label for="id_password" class="form-label">Password</label>
+                    {{ form.password|add_class:"form-control" }}
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn btn-primary w-100">Login</button>
+
+                <!-- Error message -->
+                {% if form.errors %}
+                <div class="alert alert-danger mt-3 text-center">
+                    Invalid credentials. Please try again.
+                </div>
+                {% endif %}
+            </form>
+
+            <hr class="my-4">
+
+            <p class="text-center text-muted mb-0">
+                Forgot password? <a href="#" class="text-decoration-none">Reset here</a>
+            </p>
+            <p class="text-center text-muted mt-1 mb-0">
+                New user? <a href="/register/" class="text-decoration-none">Create account</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Optional: Custom styles -->
+<style>
+    input[type="text"], input[type="password"] {
+        border-radius: 8px;
+        padding: 10px;
+    }
+
+    .card {
+        transition: transform 0.3s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+    }
+</style>
+{% endblock %}
