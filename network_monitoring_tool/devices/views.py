@@ -77,17 +77,6 @@ class NetworkDeviceDetailView(generics.RetrieveUpdateDestroyAPIView):
         super().perform_destroy(instance)
 
 
-def log_action(request, action, instance, details=""):
-    AuditLog.objects.create(
-        user=request.user if request.user.is_authenticated else None,
-        action=action,
-        model_name=instance.__class__.__name__,
-        object_id=str(instance.pk),
-        details=details
-    )
-
-
-
 # --- Device Groups ---
 def device_group_list(request):
     groups = DeviceGroup.objects.all()
