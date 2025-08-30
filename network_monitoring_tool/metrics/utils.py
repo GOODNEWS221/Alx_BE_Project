@@ -2,7 +2,8 @@ from pysnmp.hlapi import *
 from ping3 import ping
 from datetime import datetime
 from django.utils.timezone import make_aware
-from metrics.models import NetworkDevice, DeviceMetric   # fixed: metric (singular), NetworkDevice
+from metrics.models import NetworkDevice, DeviceMetric
+
 
 def ping_device(device: NetworkDevice):
     """
@@ -14,31 +15,46 @@ def ping_device(device: NetworkDevice):
     metric = DeviceMetric.objects.create(
         device=device,
         metric_type="ping",
-        value=response_time * 1000 if response_time else None,  # convert to ms
+        value=response_time * 1000 if response_time else None,  # ms or None if failed
         timestamp=timestamp
     )
 
     return metric
 
 
-def snmp_get(ip, community, oid, port=161):   # fixed: oid spelling + added colon
+def snmp_get(ip, community, oid, port=161):
     """
     Perform SNMP GET request.
     """
-    iterator = getCmd( # type: ignore
-        SnmpEngine(), # type: ignore
-        CommunityData(community, mpModel=0),  # SNMP v2c # type: ignore
-        UdpTransportTarget((ip, port)), # type: ignore
-        ContextData(), # type: ignore
-        ObjectType(ObjectIdentity(oid)) # type: ignore
+    iterator = getCmd(
+        SnmpEngine(),
+        CommunityData(community, mpModel=0),  # SNMP v2c
+        UdpTransportTarget((ip, port)),
+        ContextData(),
+        ObjectType(ObjectIdentity(oid))
     )
 
     errorIndication, errorStatus, errorIndex, varBinds = next(iterator)
 
-    if errorIndication:
+    if errorIndication or errorStatus:
         return None
-    elif errorStatus:
-        return None
-    else:
-        for varBind in varBinds:
-            return str(varBind[1])
+
+    for varBind in varBinds:
+        return str(varBind[1])
+
+
+def log_snmp_metric(device: NetworkDevice, oid: str, metric_type: str):
+    """
+    Fetch SNMP data from a device and log it in DeviceMetric.
+    """
+    value = snmp_get(device.ip_address, device.snmp_community, oid)
+    timestamp = make_aware(datetime.now())
+
+    metric = DeviceMetric.objects.create(
+        device=device,
+        metric_type=metric_type,
+        value=value,
+        timestamp=timestamp
+    )
+
+    return metric

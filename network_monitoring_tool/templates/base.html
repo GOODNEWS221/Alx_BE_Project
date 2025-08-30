@@ -2,60 +2,107 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}Network Monitoring Tool{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Network Monitor</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+        }
+        .sidebar {
+            height: 100vh;
+            background-color: #1e2a38;
+            padding-top: 20px;
+        }
+        .sidebar .nav-link {
+            color: #cfd8dc;
+            font-size: 15px;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin: 5px 10px;
+            display: flex;
+            align-items: center;
+            transition: all 0.2s ease-in-out;
+        }
+        .sidebar .nav-link:hover {
+            background-color: #394a59;
+            color: #fff;
+        }
+        .sidebar .nav-link.active {
+            background-color: #007bff;
+            color: #fff;
+        }
+        .sidebar .nav-link i {
+            margin-right: 10px;
+        }
+        .sidebar .brand {
+            font-size: 22px;
+            font-weight: bold;
+            color: white;
+            padding: 10px 20px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #394a59;
+        }
+        .content {
+            padding: 20px;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="{% url 'dashboard' %}">Network Monitor</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item"><a class="nav-link" href="{% url 'network-device-list' %}">Devices</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'metrics-list' %}">Metrics</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'alerts-list' %}">Alerts</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'audit-list' %}">Audit Logs</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'user-list' %}">Users</a></li>
-                </ul>
-                <ul class="navbar-nav">
-                    {% if request.user.is_authenticated %}
-                        <li class="nav-item">
-                            <span class="navbar-text me-2">Hello, {{ request.user.username }}</span>
-                        </li>
-                        <!-- Use POST form for logout -->
-                        <li class="nav-item">
-                            <form method="post" action="{% url 'logout' %}">
-                                {% csrf_token %}
-                                <button class="btn btn-link nav-link" type="submit" style="display:inline; padding:0;">Logout</button>
-                            </form>
-                        </li>
-                    {% else %}
-                        <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
-                    {% endif %}
-                </ul>
-            </div>
-        </div>
-    </nav>
-
     <div class="container-fluid">
         <div class="row">
             <!-- Sidebar -->
-            <nav class="col-md-2 bg-light sidebar py-3">
+            <nav class="col-md-2 sidebar d-md-block">
+                <div class="brand">⚡ Network Monitor</div>
                 <ul class="nav flex-column">
-                    <li class="nav-item"><a class="nav-link" href="{% url 'network-device-list' %}">Devices</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'metrics-list' %}">Metrics</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'alerts-list' %}">Alerts</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'audit-list' %}">Audit Logs</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" href="{% url 'dashboard' %}">
+                            <i class="fas fa-tachometer-alt"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'network-device-list' %}active{% endif %}" href="{% url 'network-device-list' %}">
+                            <i class="fas fa-server"></i> Devices
+                        </a>
+                    </li>
+          
+
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'metrics-list' %}active{% endif %}" href="{% url 'metrics-list' %}">
+                            <i class="fas fa-chart-line"></i> Metrics
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'device-group-list' %}active{% endif %}" href="{% url 'device-group-list' %}">
+                            <i class="fas fa-network-wired"></i> Device Groups
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'alerts-list' %}active{% endif %}" href="{% url 'alerts-list' %}">
+                            <i class="fas fa-bell"></i> Alerts
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'audit-list' %}active{% endif %}" href="{% url 'audit-list' %}">
+                            <i class="fas fa-clipboard-list"></i> Audit Logs
+                        </a>
+                    </li>
+                    <li class="nav-item mt-3">
+                        <a class="nav-link text-danger" href="{% url 'logout' %}">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
+                    </li>
                 </ul>
             </nav>
 
-            <!-- Main content -->
-            <main class="col-md-10 ms-sm-auto px-4">
+            <!-- Content -->
+            <main class="col-md-10 ms-sm-auto col-lg-10 content">
                 {% block content %}
+                <h2>Welcome to Network Monitor Dashboard</h2>
+                <p>Select an option from the sidebar.</p>
                 {% endblock %}
             </main>
         </div>

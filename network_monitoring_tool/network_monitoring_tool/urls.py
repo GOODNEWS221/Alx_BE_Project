@@ -24,8 +24,9 @@ urlpatterns = [
     path("api/alerts/", include("alerts.urls")),
     path("api/audit/", include("audit.urls")),
     
+    
     # Web URLs (HTML pages)
-    path("users/", include("users.urls_web")),
+    
     path("devices/", include("devices.urls_web")),
     path("metrics/", include("metrics.urls_web")),
     path("alerts/", include("alerts.urls_web")),

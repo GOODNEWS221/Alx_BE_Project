@@ -1,6 +1,8 @@
 from django.urls import path
 from . import views
 
+
+
 urlpatterns = [
     # Device Groups
     path("groups/", views.device_group_list, name="device-group-list"),

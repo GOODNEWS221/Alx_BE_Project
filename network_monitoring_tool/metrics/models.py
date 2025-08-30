@@ -1,7 +1,11 @@
 from django.db import models
 from django.conf import settings
 
+
 class DeviceGroup(models.Model):
+    """
+    Logical grouping of devices (e.g., Routers, Switches, Firewalls, etc.)
+    """
     name = models.CharField(max_length=100, unique=True)
     description = models.TextField(blank=True, null=True)
 
@@ -10,6 +14,9 @@ class DeviceGroup(models.Model):
 
 
 class NetworkDevice(models.Model):
+    """
+    Represents a network device with SNMP support and grouping.
+    """
     DEVICE_TYPES = (
         ("Router", "Router"),
         ("Switch", "Switch"),
@@ -30,7 +37,7 @@ class NetworkDevice(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="unknown")
     location = models.CharField(max_length=100, blank=True, null=True)
 
-    # 🔹 SNMP support
+    # SNMP support
     snmp_community = models.CharField(max_length=100, default="public")
     snmp_port = models.PositiveIntegerField(default=161)
 
@@ -47,20 +54,31 @@ class NetworkDevice(models.Model):
 
 
 class DeviceMetric(models.Model):
+    """
+    Metrics collected from devices (Ping, CPU, Memory, etc.)
+    Used for availability & performance graphs.
+    """
     METRIC_TYPES = (
-        ("ping", "Ping"),
-        ("cpu", "CPU"),
-        ("memory", "Memory"),
-        ("interface", "Interface"),
+        ("ping", "Ping (ms)"),
+        ("cpu", "CPU Usage (%)"),
+        ("memory", "Memory Usage (%)"),
+        ("interface", "Interface Utilization (%)"),
+        ("availability", "Availability (%)"),
         ("custom", "Custom"),
     )
 
-    device = models.ForeignKey(NetworkDevice, on_delete=models.CASCADE, related_name="metrics")
+    device = models.ForeignKey(
+        NetworkDevice, on_delete=models.CASCADE, related_name="metrics"
+    )
     metric_type = models.CharField(max_length=50, choices=METRIC_TYPES)
-    value = models.FloatField(null=True, blank=True)  # e.g., latency ms, CPU %, memory %
-    timestamp = models.DateTimeField()
+    value = models.FloatField(null=True, blank=True)  # e.g., latency, %, etc.
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-timestamp"]  # latest first
+        indexes = [
+            models.Index(fields=["device", "metric_type", "timestamp"]),
+        ]
 
     def __str__(self):
-        return f"{self.device.name} - {self.metric_type} @ {self.timestamp}"
-
-
+        return f"{self.device.name} - {self.metric_type}: {self.value} @ {self.timestamp}"
